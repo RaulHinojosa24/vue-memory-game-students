@@ -1,63 +1,62 @@
 <script setup>
+// Importamos el JSON. Vue ya lo convierte en un array de objetos y lo poe en la variable pokedex
 
-// Importamos el JSON. Vue ya lo convierte en un array de objetos y lo poe en la variable pokedex 
-import pokedex from './assets/pokedex.json';
+import pokedex from "./assets/pokedex.json";
+import backCardImage from './assets/back-card.png';
+import ChessBoard from "./components/ChessBoard.vue";
+import { reactive } from "@vue/reactivity";
+
+let cards = pokedex.slice(0, 10);
+
+cards = cards.map((pokemon, index) => {
+  return {
+    uid: index,
+    id: pokemon.id,
+    imageUrl: `/pokemons/${pokemon.id.toString().padStart(3, '0')}.png`,
+    name: pokemon.name.english,
+    isRevealed: false
+  }
+});
+
+const state = reactive({
+  score: 0
+});
+
+function icreaseScoreBy(amount) {
+  state.score += amount;
+}
 
 </script>
 
 <template>
   <header>
-    <h1>¡PokeMemory</h1>
+    <h1>¡PokeMemory!</h1>
+    <h2>Score: {{ state.score }}</h2>
   </header>
 
-  <main>
+  <main id="main">
+    <ChessBoard :cards="cards" :backCard="backCardImage" @increaseScore="(x) => icreaseScoreBy(x)" />
   </main>
 </template>
 
 <style>
 @import "./assets/base.css";
 
-header {
-  line-height: 1.5;
+#app,
+#main {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-}
-
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
+.chess-board {
+  width: 100%;
 }
 
 @media (min-width: 1024px) {
-  body {
-    display: flex;
-  }
-
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
+  .chess-board {
+    width: 70%;
   }
 }
 </style>
